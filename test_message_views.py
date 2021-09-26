@@ -84,7 +84,7 @@ class MessageViewTestCase(TestCase):
 
             # test that user is redirected to ('/')
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>Sign up now to get your own personalized timeline!</p>", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
             
 
     def test_view_message(self):
@@ -178,7 +178,8 @@ class MessageViewTestCase(TestCase):
             resp = c.post(f"/messages/{m_id}/delete", follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>Sign up now to get your own personalized timeline!</p>", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
+
             # make sure message wasn't deleted
             self.assertEqual(Message.query.one().id, m_id)
 
@@ -210,20 +211,11 @@ class MessageViewTestCase(TestCase):
                 sess[CURR_USER_KEY] = self.testuser2.id
 
             resp = c.post(f"/users/add_like/{m_id}", follow_redirects=True)
+            data = resp.json
 
-            html = resp.get_data(as_text=True)
-
+            self.assertEqual({"message" : f"Message number {m_id} liked"}, data)
             self.assertEqual(resp.status_code, 200)
-
-            self.assertIn("""<div class="image-wrapper">
-            <img src="/static/images/warbler-hero.jpg" alt="" class="card-hero">
-          </div>""", html)
-
-            like = Likes.query.first()
-
-            self.assertEqual(m_id, like.message_id)
-            self.assertEqual(self.testuser2.id, like.user_id)
-
+            
         # logout user, then try to like a message
         with self.client as c:
             with c.session_transaction() as sess:
@@ -232,6 +224,6 @@ class MessageViewTestCase(TestCase):
             resp = c.post(f"/users/add_like/{m_id}", follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>Sign up now to get your own personalized timeline!</p>", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
         
