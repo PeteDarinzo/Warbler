@@ -310,9 +310,23 @@ class UserViewTestCase(TestCase):
             c.post('/login', data=data)
 
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
-            html = resp.get_data(as_text=True)
+            data = resp.json
+
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>@MrsTurtle</p>", html)
+            self.assertEqual({"message" : f"Message number {msg.id} liked"}, data)
+
+            #     data = resp.json
+            # self.assertEqual(data, {
+            #     "cupcakes": [
+            #         {
+            #             "id": self.cupcake.id,
+            #             "flavor": "TestFlavor",
+            #             "size": "TestSize",
+            #             "rating": 5,
+            #             "image": "http://test.com/cupcake.jpg"
+            #         }
+            #     ]
+            # })
 
             # test that message appears in '/users/likes'
             resp = c.get(f'/users/{self.mrsturtle.id}/likes')
@@ -322,9 +336,10 @@ class UserViewTestCase(TestCase):
 
             # unlike the message, and test that it doesn't appear in 'users/likes'
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
-            html = resp.get_data(as_text=True)
+            data = resp.json
+            
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>@MrsTurtle</p>", html)
+            self.assertEqual({"message" : f"Message number {msg.id} unliked"}, data)
 
             resp = c.get(f'/users/{self.mrsturtle.id}/likes')
             html = resp.get_data(as_text=True)

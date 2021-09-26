@@ -172,13 +172,12 @@ def users_show(user_id):
 
 
 @app.route('/users/<int:user_id>/following')
-@login_required
 def show_following(user_id):
     """Show list of people this user is following."""
 
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     user = User.query.get_or_404(user_id)
     return render_template('users/following.html', user=user)
@@ -189,8 +188,8 @@ def users_followers(user_id):
     """Show list of followers of this user."""
 
     if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+            flash("Access unauthorized.", "danger")
+            return redirect("/")
 
     user = User.query.get_or_404(user_id)
     return render_template('users/followers.html', user=user)
@@ -224,6 +223,7 @@ def add_follow(follow_id):
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
+
 def stop_following(follow_id):
     """Have currently-logged-in-user stop following this user."""
 
@@ -243,8 +243,8 @@ def profile():
     """Update profile for current user."""
 
     if not g.user:
-        flash("Unauthorized.", "danger")
-        return redirect('/')
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     edit_form = EditForm(obj=g.user)
     
@@ -330,9 +330,8 @@ def messages_like(message_id):
     """Like a message."""
 
     if not g.user:
-
-        flash("Must be logged in", 'danger')
-        return redirect('/')
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     liked = Likes.query.filter_by(message_id=message_id).first()
 
@@ -344,7 +343,7 @@ def messages_like(message_id):
 
         g.user.likes = likes
 
-        return jsonify(message=f"Message number {message_id} unliked.")
+        return jsonify(message=f"Message number {message_id} unliked")
 
     like = Likes(user_id=g.user.id, message_id=message_id)
 
