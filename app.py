@@ -1,6 +1,6 @@
-import os
+import os, functools
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
@@ -27,6 +27,16 @@ connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
+
+def login_required(func):
+    """Make sure user is logged in before proceeding."""
+    @functools.wraps(func)
+    def wrapper_login_required(*args, **kwargs):
+        if not g.user:
+            flash("Access unauthorized.", "danger")
+            return redirect(url_for("login", next=request.url))
+        return func(*args, **kwargs)
+    return wrapper_login_required
 
 
 @app.before_request
@@ -99,9 +109,13 @@ def login():
         user = User.authenticate(form.username.data,
                                  form.password.data)
 
+        next_url = request.form.get('next')
+
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
+            if next_url:
+                return redirect(next_url)
             return redirect("/")
 
         flash("Invalid credentials.", 'danger')
@@ -158,12 +172,13 @@ def users_show(user_id):
 
 
 @app.route('/users/<int:user_id>/following')
+@login_required
 def show_following(user_id):
     """Show list of people this user is following."""
 
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    # if not g.user:
+    #     flash("Access unauthorized.", "danger")
+    #     return redirect("/")
 
     user = User.query.get_or_404(user_id)
     return render_template('users/following.html', user=user)
@@ -312,7 +327,7 @@ def messages_show(message_id):
 
 @app.route('/users/add_like/<int:message_id>', methods=["POST"])
 def messages_like(message_id):
-    """Like a message"""
+    """Like a message."""
 
     if not g.user:
 
@@ -329,7 +344,7 @@ def messages_like(message_id):
 
         g.user.likes = likes
 
-        return redirect('/')
+        return jsonify(message=f"Message number {message_id} unliked.")
 
     like = Likes(user_id=g.user.id, message_id=message_id)
 
@@ -339,7 +354,7 @@ def messages_like(message_id):
     likes = Likes.query.filter(Likes.user_id == g.user.id).all()
 
     g.user.likes = likes
-    return redirect('/')
+    return jsonify(message=f"Message number {message_id} liked")
 
 
 
