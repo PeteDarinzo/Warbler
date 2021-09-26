@@ -324,11 +324,7 @@ class UserViewTestCase(TestCase):
             # unlike the message, and test that it doesn't appear in 'users/likes'
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
             data = resp.json
-<<<<<<< HEAD
             
-=======
-            
->>>>>>> decorators
             self.assertEqual(resp.status_code, 200)
             self.assertEqual({"message" : f"Message number {msg.id} unliked"}, data)
 
