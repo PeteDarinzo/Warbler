@@ -197,7 +197,7 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
             data = {
                 "username": "MrTurtle",
@@ -279,7 +279,7 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
 
 
@@ -310,10 +310,11 @@ class UserViewTestCase(TestCase):
             c.post('/login', data=data)
 
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
-            html = resp.get_data(as_text=True)
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>@MrsTurtle</p>", html)
+            data = resp.json
 
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual({"message" : f"Message number {msg.id} liked"}, data)
+            
             # test that message appears in '/users/likes'
             resp = c.get(f'/users/{self.mrsturtle.id}/likes')
             html = resp.get_data(as_text=True)
@@ -322,9 +323,10 @@ class UserViewTestCase(TestCase):
 
             # unlike the message, and test that it doesn't appear in 'users/likes'
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
-            html = resp.get_data(as_text=True)
+            data = resp.json
+
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<p>@MrsTurtle</p>", html)
+            self.assertEqual({"message" : f"Message number {msg.id} unliked"}, data)
 
             resp = c.get(f'/users/{self.mrsturtle.id}/likes')
             html = resp.get_data(as_text=True)
@@ -337,12 +339,12 @@ class UserViewTestCase(TestCase):
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
             resp = c.get(f'/users/{self.mrsturtle.id}/likes', follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
 
     def test_user_edit_profile(self):
@@ -409,7 +411,7 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
 
     def test_user_delete(self):
@@ -434,7 +436,7 @@ class UserViewTestCase(TestCase):
             resp = c.post('/users/delete', follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("""<h1>What's Happening?</h1>""", html)
+            self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
 
 

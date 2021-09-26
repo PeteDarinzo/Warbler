@@ -352,7 +352,7 @@ def messages_like(message_id):
 
         g.user.likes = likes
 
-        return jsonify(message=f"Message number {message_id} unliked.")
+        return jsonify(message=f"Message number {message_id} unliked")
 
     like = Likes(user_id=g.user.id, message_id=message_id)
 
