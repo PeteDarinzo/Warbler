@@ -187,17 +187,7 @@ def show_following(user_id):
 @login_required
 def users_followers(user_id):
     """Show list of followers of this user."""
-
-<<<<<<< HEAD
-    if not g.user:
-            flash("Access unauthorized.", "danger")
-            return redirect("/")
-=======
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
->>>>>>> decorators
-
+    
     user = User.query.get_or_404(user_id)
     return render_template('users/followers.html', user=user)
 
@@ -232,17 +222,9 @@ def add_follow(follow_id):
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
-<<<<<<< HEAD
-
-=======
 @login_required
->>>>>>> decorators
 def stop_following(follow_id):
     """Have currently-logged-in-user stop following this user."""
-
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
 
     followed_user = User.query.get(follow_id)
     g.user.following.remove(followed_user)
@@ -255,16 +237,6 @@ def stop_following(follow_id):
 @login_required
 def profile():
     """Update profile for current user."""
-
-<<<<<<< HEAD
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-=======
-    # if not g.user:
-    #     flash("Unauthorized.", "danger")
-    #     return redirect('/')
->>>>>>> decorators
 
     edit_form = EditForm(obj=g.user)
     
@@ -300,10 +272,6 @@ def profile():
 def delete_user():
     """Delete user."""
 
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
-
     do_logout()
 
     db.session.delete(g.user)
@@ -322,10 +290,6 @@ def messages_add():
 
     Show form if GET. If valid, update message and redirect to user page.
     """
-
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
 
     form = MessageForm()
 
@@ -351,17 +315,6 @@ def messages_show(message_id):
 @login_required
 def messages_like(message_id):
     """Like a message."""
-
-<<<<<<< HEAD
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-=======
-    # if not g.user:
-
-    #     flash("Must be logged in", 'danger')
-    #     return redirect('/')
->>>>>>> decorators
 
     liked = Likes.query.filter_by(message_id=message_id).first()
 
