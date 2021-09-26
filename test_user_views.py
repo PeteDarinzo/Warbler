@@ -311,25 +311,6 @@ class UserViewTestCase(TestCase):
 
             resp = c.post(f'/users/add_like/{msg.id}', follow_redirects=True)
             data = resp.json
-<<<<<<< HEAD
-
-            self.assertEqual(resp.status_code, 200)
-            self.assertEqual({"message" : f"Message number {msg.id} liked"}, data)
-
-            #     data = resp.json
-            # self.assertEqual(data, {
-            #     "cupcakes": [
-            #         {
-            #             "id": self.cupcake.id,
-            #             "flavor": "TestFlavor",
-            #             "size": "TestSize",
-            #             "rating": 5,
-            #             "image": "http://test.com/cupcake.jpg"
-            #         }
-            #     ]
-            # })
-=======
->>>>>>> decorators
 
             self.assertEqual(resp.status_code, 200)
             self.assertEqual({"message" : f"Message number {msg.id} liked"}, data)
@@ -346,7 +327,7 @@ class UserViewTestCase(TestCase):
 <<<<<<< HEAD
             
 =======
-
+            
 >>>>>>> decorators
             self.assertEqual(resp.status_code, 200)
             self.assertEqual({"message" : f"Message number {msg.id} unliked"}, data)
