@@ -31,10 +31,12 @@ class MessageModelTestCase(TestCase):
 
         self.client = app.test_client()
 
+
     def tearDown(self):
         """Clean up after tests."""
 
         db.session.rollback()
+
 
     def test_message_model(self):
         """Does basic model work?"""

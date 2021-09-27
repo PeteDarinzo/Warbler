@@ -1,7 +1,6 @@
 import os, functools
 
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
-from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditForm
@@ -18,9 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -28,6 +25,14 @@ connect_db(app)
 ##############################################################################
 # User signup/login/logout
 
+##
+# LOGIN DECORATOR
+# Adapted from https://realpython.com/primer-on-python-decorators/
+# 8/22/2018
+# and 
+#https://blog.teclado.com/handling-the-next-url-when-logging-in-with-flask/
+#
+# Decorator is added before each route function requiring a user to be logged in.
 def login_required(func):
     """Make sure user is logged in before proceeding."""
     @functools.wraps(func)
@@ -121,8 +126,6 @@ def login():
             else:
                 return redirect(url_for("homepage"))
 
-            
-
         flash("Invalid credentials.", 'danger')
 
     return render_template('users/login.html', form=form)
@@ -215,7 +218,6 @@ def add_follow(follow_id):
     return redirect(url_for("show_following", user_id=g.user.id))
 
 
-
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
 @login_required
 def stop_following(follow_id):
@@ -259,7 +261,6 @@ def profile():
             return render_template('users/edit.html', form=edit_form)
 
     return render_template('users/edit.html', form=edit_form)
-
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -333,7 +334,6 @@ def messages_like(message_id):
 
     g.user.likes = likes
     return jsonify(message=f"Message number {message_id} liked")
-
 
 
 @app.route('/messages/<int:message_id>/delete', methods=["POST"])
