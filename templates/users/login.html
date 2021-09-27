@@ -11,7 +11,7 @@
       <form method="POST" id="user_form">
         {{ form.hidden_tag() }}
         
-        <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+        <input type="hidden" name="next" value="{{ request.args.get('next', "") }}">
 
         {% for field in form if field.widget.input_type != 'hidden' %}
           {% for error in field.errors %}

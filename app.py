@@ -93,7 +93,7 @@ def signup():
 
         do_login(user)
 
-        return redirect("/")
+        return redirect(url_for("homepage"))
 
     else:
         return render_template('users/signup.html', form=form)
@@ -114,9 +114,12 @@ def login():
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
-            if next_url:
-                return redirect(next_url)
-            return redirect("/")
+
+            if next_url == "":
+
+                return redirect('/')
+            
+            return redirect(next_url)
 
         flash("Invalid credentials.", 'danger')
 
@@ -131,7 +134,7 @@ def logout():
 
     flash("Logout successful!", 'success')
 
-    return redirect('/login')
+    return redirect(url_for("login"))
 
 
 ##############################################################################
@@ -194,10 +197,6 @@ def users_followers(user_id):
 def users_likes(user_id):
     """Show list of user's liked messages."""
 
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
-
     user = User.query.get_or_404(user_id)
     return render_template('users/likes.html', user=user)
 
@@ -206,10 +205,6 @@ def users_likes(user_id):
 @login_required
 def add_follow(follow_id):
     """Add a follow for the currently-logged-in user."""
-
-    # if not g.user:
-    #     flash("Access unauthorized.", "danger")
-    #     return redirect("/")
 
     followed_user = User.query.get_or_404(follow_id)
     g.user.following.append(followed_user)
@@ -274,7 +269,7 @@ def delete_user():
     db.session.delete(g.user)
     db.session.commit()
 
-    return redirect("/signup")
+    return redirect(url_for("signup"))
 
 
 ##############################################################################
