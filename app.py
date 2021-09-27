@@ -117,7 +117,7 @@ def login():
 
             if next_url == "":
 
-                return redirect('/')
+                return redirect(url_for("homepage"))
             
             return redirect(next_url)
 
@@ -341,7 +341,7 @@ def messages_destroy(message_id):
 
     if g.user.id != msg.user_id:
         flash("Access unauthorized.", "danger")
-        return redirect("/")
+        return redirect(url_for("homepage"))
 
     db.session.delete(msg)
     db.session.commit()
