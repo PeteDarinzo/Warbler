@@ -117,9 +117,9 @@ class UserViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn("""<h2 class="join-message">Welcome back.</h2>""", html)
 
-
             data = {"username" : "testuser",
-                    "password" : "testuser"}
+                    "password" : "testuser"
+                    }
 
             resp = c.post('/login', data=data, follow_redirects=True)
 

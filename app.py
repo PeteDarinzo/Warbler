@@ -115,11 +115,13 @@ def login():
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
 
-            if next_url == "":
-
-                return redirect(url_for("homepage"))
+            if next_url:
+                return redirect(next_url)
             
-            return redirect(next_url)
+            else:
+                return redirect(url_for("homepage"))
+
+            
 
         flash("Invalid credentials.", 'danger')
 
@@ -210,7 +212,8 @@ def add_follow(follow_id):
     g.user.following.append(followed_user)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}/following")
+    return redirect(url_for("show_following", user_id=g.user.id))
+
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
@@ -222,7 +225,7 @@ def stop_following(follow_id):
     g.user.following.remove(followed_user)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}/following")
+    return redirect(url_for("show_following", user_id=g.user.id))
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
@@ -249,7 +252,7 @@ def profile():
             db.session.commit()
 
             flash("Update Successful!", "success")
-            return redirect(f'/users/{g.user.id}')
+            return redirect(url_for("users_show", user_id=g.user.id))
         
         else:
             flash("Wrong Password", "danger")
@@ -290,7 +293,8 @@ def messages_add():
         g.user.messages.append(msg)
         db.session.commit()
 
-        return redirect(f"/users/{g.user.id}")
+        return redirect(url_for("users_show", user_id=g.user.id))
+
 
     return render_template('messages/new.html', form=form)
 
@@ -346,7 +350,7 @@ def messages_destroy(message_id):
     db.session.delete(msg)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}")
+    return redirect(url_for("users_show", user_id=g.user.id))
 
 
 ##############################################################################
